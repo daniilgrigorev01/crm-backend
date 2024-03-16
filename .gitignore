@@ -1,0 +1,13 @@
+# Скомпилированные файлы
+/dist
+/build
+
+# Сторонние зависимости
+/node_modules
+
+# IDE
+/.idea
+
+# Переменные окружения
+.env.development
+.env.production
