@@ -3,8 +3,8 @@
   "private": true,
   "scripts": {
     "build": "nest build",
-    "start": "dotenv -e .env.production nest start",
-    "start:dev": "dotenv -e .env.development nest start --watch",
+    "start": "dotenv -e .env.production -- nest start",
+    "start:dev": "dotenv -e .env.development -- nest start --watch",
     "lint": "eslint \"src/**/*.ts\" --fix"
   },
   "dependencies": {
