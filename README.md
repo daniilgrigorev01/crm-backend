@@ -11,10 +11,10 @@ REST API сервер для управления базой данных кли
 
 ## Технологии
 
-- TypeScript
-- NestJS
-- Prisma
-- PostgreSQL
+- [TypeScript](https://www.typescriptlang.org/)
+- [NestJS](https://nestjs.com/)
+- [Prisma](https://www.prisma.io/)
+- [PostgreSQL](https://www.postgresql.org/)
 
 ## Лицензия
 
