@@ -13,6 +13,8 @@ REST API сервер для управления базой данных кли
 
 - TypeScript
 - NestJS
+- Prisma
+- PostgreSQL
 
 ## Лицензия
 
