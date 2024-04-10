@@ -14,5 +14,6 @@ module.exports = {
   rules: {
     'import/no-extraneous-dependencies': 'off',
     'unicorn/prefer-top-level-await': 'off',
+    'import/prefer-default-export': 'off',
   },
 };
