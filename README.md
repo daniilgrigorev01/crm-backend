@@ -19,6 +19,33 @@ REST API сервер для управления базой данных кли
 
 ## Запуск
 
+Клонируйте репозиторий и установите зависимости
+
+```
+  git clone https://github.com/daniilgrigorev01/crm-backend.git
+  cd crm-backend
+  pnpm i --frozen-lockfile
+```
+
+Установите необходимые env-переменные
+
+```
+  PORT=0000
+  DATABASE_URL='postgresql://USER_DB:PASS_DB@HOST_DB:PORT_DB/NAME_DB'
+```
+
+Выполните миграцию базы данных
+
+```
+  pnpm run migrate:dev
+```
+
+Запустите сервер в режиме разработки
+
+```
+  pnpm run start:dev
+```
+
 ## API
 
 См. спецификацию после запуска сервера по адресу:
