@@ -27,13 +27,17 @@ export class CreateClientDto {
   @IsNotEmpty({ message: 'Фамилия не может быть пустой' })
   lastName: string;
 
-  @ApiProperty({ required: false, example: 'Петрович' })
+  @ApiProperty({
+    type: String,
+    nullable: true,
+    example: 'Петрович',
+  })
   @IsAlpha('ru-RU', {
     message: 'Отчество может содержать только русские буквы',
   })
-  @IsString({ message: '' })
+  @IsString({ message: 'Отчество должно быть строкой' })
   @IsOptional()
-  patronymic?: string;
+  patronymic: string | null;
 
   @ApiProperty({ required: false, type: [CreateContactDto] })
   @ValidateNested({
@@ -42,5 +46,5 @@ export class CreateClientDto {
   @Type(() => CreateContactDto)
   @IsArray({ message: 'Список контактов должен являться массивом' })
   @IsOptional()
-  contacts?: CreateContactDto[];
+  contacts: CreateContactDto[] | null;
 }

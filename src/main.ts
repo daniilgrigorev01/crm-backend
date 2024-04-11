@@ -1,8 +1,9 @@
-import { NestFactory } from '@nestjs/core';
+import { HttpAdapterHost, NestFactory } from '@nestjs/core';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { ExpressAdapter } from '@nestjs/platform-express';
 import { DocumentBuilder, OpenAPIObject, SwaggerModule } from '@nestjs/swagger';
-import AppModule from './app.module';
+import { PrismaClientExceptionFilter } from 'nestjs-prisma';
+import { AppModule } from './app.module';
 
 async function bootstrap(): Promise<void> {
   const PORT: number = Number(process.env.PORT);
@@ -15,6 +16,9 @@ async function bootstrap(): Promise<void> {
       transform: true,
     }),
   );
+
+  const { httpAdapter } = app.get(HttpAdapterHost);
+  app.useGlobalFilters(new PrismaClientExceptionFilter(httpAdapter));
 
   const config: Omit<OpenAPIObject, 'paths'> = new DocumentBuilder()
     .setTitle('CRM-backend')

@@ -13,7 +13,8 @@ module.exports = {
   ignorePatterns: ['.eslintrc.js'],
   rules: {
     'import/no-extraneous-dependencies': 'off',
-    'unicorn/prefer-top-level-await': 'off',
     'import/prefer-default-export': 'off',
+    'unicorn/prefer-top-level-await': 'off',
+    '@typescript-eslint/return-await': ['error', 'always'],
   },
 };
