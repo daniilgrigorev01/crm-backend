@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Type } from 'class-transformer';
 import { GetContactDto } from './get-contact.dto';
 import { CreateClientDto } from './create-client.dto';
 
@@ -13,5 +14,6 @@ export class GetClientDto extends CreateClientDto {
   updatedAt: Date;
 
   @ApiProperty({ type: [GetContactDto] })
+  @Type(() => GetContactDto)
   declare contacts: GetContactDto[];
 }

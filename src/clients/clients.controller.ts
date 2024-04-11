@@ -1,12 +1,14 @@
 import {
   BadRequestException,
   Body,
+  ClassSerializerInterceptor,
   Controller,
   Delete,
   Get,
   InternalServerErrorException,
   Param,
   Post,
+  UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
@@ -19,11 +21,13 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { Prisma } from '@prisma/client';
+import { plainToInstance } from 'class-transformer';
 import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { GetClientDto } from './dto/get-client.dto';
 
 @ApiTags('Clients')
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller('clients')
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
@@ -36,7 +40,9 @@ export class ClientsController {
   })
   async findOne(@Param('id') id: string): Promise<GetClientDto> {
     try {
-      return await this.clientsService.findOne(id);
+      const client: GetClientDto = await this.clientsService.findOne(id);
+
+      return plainToInstance(GetClientDto, client);
     } catch (error) {
       throw error instanceof Prisma.PrismaClientKnownRequestError
         ? error
@@ -60,7 +66,9 @@ export class ClientsController {
   })
   async create(@Body() client: CreateClientDto): Promise<GetClientDto> {
     try {
-      return await this.clientsService.create(client);
+      const newClient: GetClientDto = await this.clientsService.create(client);
+
+      return plainToInstance(GetClientDto, newClient);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         throw error;
