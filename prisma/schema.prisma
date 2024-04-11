@@ -29,6 +29,6 @@ model Contact {
   id       Int      @id @default(autoincrement())
   type     EContact
   value    String   @unique
-  client   Client   @relation(fields: [clientId], references: [id])
+  client   Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
   clientId String
 }
