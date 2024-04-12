@@ -8,7 +8,7 @@ import {
 } from 'class-validator';
 import { ValidateContact } from '../decorators/validate-contact.decorator';
 
-export class CreateContactDto {
+export class CreateContactDTO {
   @ApiProperty({ enum: EContact })
   @IsEnum(EContact, {
     message: 'Тип контакта должен содержать разрешенное значение ',
@@ -20,7 +20,7 @@ export class CreateContactDto {
   @ApiProperty({ example: '+79999999999' })
   @ValidateContact({
     message: (arguments_: ValidationArguments): string => {
-      const { type } = arguments_.object as CreateContactDto;
+      const { type } = arguments_.object as CreateContactDTO;
       return `Значение контакта типа ${type} должно быть валидным`;
     },
   })

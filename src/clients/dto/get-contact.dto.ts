@@ -1,7 +1,7 @@
 import { Exclude } from 'class-transformer';
-import { CreateContactDto } from './create-contact.dto';
+import { CreateContactDTO } from './create-contact.dto';
 
-export class GetContactDto extends CreateContactDto {
+export class GetContactDTO extends CreateContactDTO {
   @Exclude()
   id: number;
 

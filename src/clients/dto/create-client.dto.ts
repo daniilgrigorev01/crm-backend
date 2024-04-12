@@ -8,9 +8,9 @@ import {
   ValidateNested,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-import { CreateContactDto } from './create-contact.dto';
+import { CreateContactDTO } from './create-contact.dto';
 
-export class CreateClientDto {
+export class CreateClientDTO {
   @ApiProperty({ example: 'Иван' })
   @IsAlpha('ru-RU', {
     message: 'Имя может содержать только русские буквы',
@@ -39,12 +39,12 @@ export class CreateClientDto {
   @IsOptional()
   patronymic: string | null;
 
-  @ApiProperty({ required: false, type: [CreateContactDto] })
+  @ApiProperty({ required: false, type: [CreateContactDTO] })
   @ValidateNested({
     each: true,
   })
-  @Type(() => CreateContactDto)
+  @Type(() => CreateContactDTO)
   @IsArray({ message: 'Список контактов должен являться массивом' })
   @IsOptional()
-  contacts: CreateContactDto[] | null;
+  contacts: CreateContactDTO[] | null;
 }

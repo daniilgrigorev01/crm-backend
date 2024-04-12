@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
-import { GetContactDto } from './get-contact.dto';
-import { CreateClientDto } from './create-client.dto';
+import { GetContactDTO } from './get-contact.dto';
+import { CreateClientDTO } from './create-client.dto';
 
-export class GetClientDto extends CreateClientDto {
+export class GetClientDTO extends CreateClientDTO {
   @ApiProperty({ example: 'e63a509d-ca19-4258-a446-aca94457ea0d' })
   id: string;
 
@@ -13,7 +13,7 @@ export class GetClientDto extends CreateClientDto {
   @ApiProperty()
   updatedAt: Date;
 
-  @ApiProperty({ type: [GetContactDto] })
-  @Type(() => GetContactDto)
-  declare contacts: GetContactDto[];
+  @ApiProperty({ type: [GetContactDTO] })
+  @Type(() => GetContactDTO)
+  declare contacts: GetContactDTO[];
 }

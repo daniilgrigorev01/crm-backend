@@ -23,8 +23,8 @@ import {
 import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
 import { ClientsService } from './clients.service';
-import { CreateClientDto } from './dto/create-client.dto';
-import { GetClientDto } from './dto/get-client.dto';
+import { CreateClientDTO } from './dto/create-client.dto';
+import { GetClientDTO } from './dto/get-client.dto';
 
 @ApiTags('Clients')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -33,16 +33,16 @@ export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
   @Get(':id')
-  @ApiOkResponse({ type: GetClientDto, description: 'Клиент найден' })
+  @ApiOkResponse({ type: GetClientDTO, description: 'Клиент найден' })
   @ApiNotFoundResponse({ description: 'Клиент с таким ID не найден' })
   @ApiInternalServerErrorResponse({
     description: 'Ошибка при поиске клиента',
   })
-  async findOne(@Param('id') id: string): Promise<GetClientDto> {
+  async findOne(@Param('id') id: string): Promise<GetClientDTO> {
     try {
-      const client: GetClientDto = await this.clientsService.findOne(id);
+      const client: GetClientDTO = await this.clientsService.findOne(id);
 
-      return plainToInstance(GetClientDto, client);
+      return plainToInstance(GetClientDTO, client);
     } catch (error) {
       throw error instanceof Prisma.PrismaClientKnownRequestError
         ? error
@@ -54,7 +54,7 @@ export class ClientsController {
 
   @Post()
   @ApiCreatedResponse({
-    type: GetClientDto,
+    type: GetClientDTO,
     description: 'Клиент добавлен в базу данных',
   })
   @ApiConflictResponse({ description: 'Нарушение уникального ограничения' })
@@ -64,11 +64,11 @@ export class ClientsController {
   @ApiInternalServerErrorResponse({
     description: 'Ошибка при записи в базу данных',
   })
-  async create(@Body() client: CreateClientDto): Promise<GetClientDto> {
+  async create(@Body() client: CreateClientDTO): Promise<GetClientDTO> {
     try {
-      const newClient: GetClientDto = await this.clientsService.create(client);
+      const newClient: GetClientDTO = await this.clientsService.create(client);
 
-      return plainToInstance(GetClientDto, newClient);
+      return plainToInstance(GetClientDTO, newClient);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         throw error;

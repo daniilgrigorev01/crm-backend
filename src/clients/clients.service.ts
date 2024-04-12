@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'nestjs-prisma';
-import { CreateClientDto } from './dto/create-client.dto';
-import { GetClientDto } from './dto/get-client.dto';
+import { CreateClientDTO } from './dto/create-client.dto';
+import { GetClientDTO } from './dto/get-client.dto';
 
 @Injectable()
 export class ClientsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findOne(id: string): Promise<GetClientDto> {
+  async findOne(id: string): Promise<GetClientDTO> {
     return await this.prisma.client.findUniqueOrThrow({
       where: {
         id,
@@ -18,7 +18,7 @@ export class ClientsService {
     });
   }
 
-  async create(client: CreateClientDto): Promise<GetClientDto> {
+  async create(client: CreateClientDTO): Promise<GetClientDTO> {
     return await this.prisma.client.create({
       data: {
         firstName: client.firstName,
