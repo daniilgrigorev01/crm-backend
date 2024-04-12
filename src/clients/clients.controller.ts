@@ -7,6 +7,7 @@ import {
   Get,
   InternalServerErrorException,
   Param,
+  Patch,
   Post,
   UseInterceptors,
 } from '@nestjs/common';
@@ -25,6 +26,7 @@ import { plainToInstance } from 'class-transformer';
 import { ClientsService } from './clients.service';
 import { CreateClientDTO } from './dto/create-client.dto';
 import { GetClientDTO } from './dto/get-client.dto';
+import { UpdateClientDTO } from './dto/update-client.dto';
 
 @ApiTags('Clients')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -79,6 +81,46 @@ export class ClientsController {
       } else {
         throw new InternalServerErrorException(
           'Ошибка при добавлении клиента в базу данных',
+        );
+      }
+    }
+  }
+
+  @Patch(':id')
+  @ApiOkResponse({
+    type: GetClientDTO,
+    description: 'Данные клиента обновлены',
+  })
+  @ApiNotFoundResponse({ description: 'Клиент не найден' })
+  @ApiConflictResponse({ description: 'Нарушение уникального ограничения' })
+  @ApiBadRequestResponse({ description: 'Ошибка валидации данных' })
+  @ApiInternalServerErrorResponse({
+    description: 'Ошибка при обновлении записи в базе данных',
+  })
+  async update(
+    @Param('id') id: string,
+    @Body() client: UpdateClientDTO,
+  ): Promise<GetClientDTO> {
+    try {
+      await this.clientsService.updateClient(id, client);
+
+      if (client.contacts) {
+        await this.clientsService.updateClientContacts(id, client.contacts);
+      }
+
+      const updatedClient: GetClientDTO = await this.clientsService.findOne(id);
+
+      return plainToInstance(GetClientDTO, updatedClient);
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        throw error;
+      } else if (error instanceof Prisma.PrismaClientValidationError) {
+        throw new BadRequestException(
+          'Ошибка валидации данных при обновлении клиента в базе данных',
+        );
+      } else {
+        throw new InternalServerErrorException(
+          'Ошибка при обновлении клиента в базе данных',
         );
       }
     }

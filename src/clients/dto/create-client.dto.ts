@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  ArrayMaxSize,
   IsAlpha,
   IsArray,
   IsNotEmpty,
@@ -42,6 +43,10 @@ export class CreateClientDTO {
   @ApiProperty({ required: false, type: [CreateContactDTO] })
   @ValidateNested({
     each: true,
+  })
+  @Type(() => CreateContactDTO)
+  @ArrayMaxSize(10, {
+    message: 'Список контактов не может быть длиннее 10 контактов',
   })
   @Type(() => CreateContactDTO)
   @IsArray({ message: 'Список контактов должен являться массивом' })
