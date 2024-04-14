@@ -1,9 +1,17 @@
 import { Module } from '@nestjs/common';
-import { PrismaModule } from 'nestjs-prisma';
+import { CustomPrismaModule } from 'nestjs-prisma';
 import { ClientsModule } from './clients/clients.module';
+import { extendedPrismaClient } from './prisma.extension';
 
 @Module({
-  imports: [PrismaModule.forRoot({ isGlobal: true }), ClientsModule],
+  imports: [
+    CustomPrismaModule.forRootAsync({
+      isGlobal: true,
+      name: 'PrismaService',
+      useFactory: () => extendedPrismaClient,
+    }),
+    ClientsModule,
+  ],
   controllers: [],
   providers: [],
 })

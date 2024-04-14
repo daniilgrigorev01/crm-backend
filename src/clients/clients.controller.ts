@@ -9,6 +9,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseInterceptors,
 } from '@nestjs/common';
 import {
@@ -27,6 +28,8 @@ import { ClientsService } from './clients.service';
 import { CreateClientDTO } from './dto/create-client.dto';
 import { GetClientDTO } from './dto/get-client.dto';
 import { UpdateClientDTO } from './dto/update-client.dto';
+import { PaginatedClientsDTO } from './dto/paginated-clients.dto';
+import { ClientsQueryParametersDTO } from './dto/clients-query-parameters.dto';
 
 @ApiTags('Clients')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -40,9 +43,9 @@ export class ClientsController {
   @ApiInternalServerErrorResponse({
     description: 'Ошибка при поиске клиента',
   })
-  async findOne(@Param('id') id: string): Promise<GetClientDTO> {
+  async findById(@Param('id') id: string): Promise<GetClientDTO> {
     try {
-      const client: GetClientDTO = await this.clientsService.findOne(id);
+      const client: GetClientDTO = await this.clientsService.findById(id);
 
       return plainToInstance(GetClientDTO, client);
     } catch (error) {
@@ -51,6 +54,40 @@ export class ClientsController {
         : new InternalServerErrorException(
             'Ошибка при поиске уникального клиента в базе данных',
           );
+    }
+  }
+
+  @Get()
+  @ApiOkResponse({ type: PaginatedClientsDTO })
+  @ApiBadRequestResponse({ description: 'Ошибка валидации данных' })
+  @ApiInternalServerErrorResponse({
+    description: 'Ошибка при получении списка клиентов',
+  })
+  async findAll(
+    @Query() query: ClientsQueryParametersDTO,
+  ): Promise<PaginatedClientsDTO> {
+    try {
+      const pageClients: PaginatedClientsDTO =
+        await this.clientsService.findAll(
+          query.limit ?? 10,
+          query.page ?? 1,
+          query.sortBy ?? 'createdAt',
+          query.sortOrder ?? 'asc',
+        );
+
+      return plainToInstance(PaginatedClientsDTO, pageClients);
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        throw error;
+      } else if (error instanceof Prisma.PrismaClientValidationError) {
+        throw new BadRequestException(
+          'Ошибка валидации данных при получении списка клиентов из базы данных',
+        );
+      } else {
+        throw new InternalServerErrorException(
+          'Ошибка при получении списка клиентов из базы данных',
+        );
+      }
     }
   }
 
@@ -108,7 +145,8 @@ export class ClientsController {
         await this.clientsService.updateClientContacts(id, client.contacts);
       }
 
-      const updatedClient: GetClientDTO = await this.clientsService.findOne(id);
+      const updatedClient: GetClientDTO =
+        await this.clientsService.findById(id);
 
       return plainToInstance(GetClientDTO, updatedClient);
     } catch (error) {

@@ -1,17 +1,22 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from 'nestjs-prisma';
+import { Inject, Injectable } from '@nestjs/common';
+import { CustomPrismaService } from 'nestjs-prisma';
 import { CreateClientDTO } from './dto/create-client.dto';
 import { GetClientDTO } from './dto/get-client.dto';
 import { UpdateClientDTO } from './dto/update-client.dto';
 import { CreateContactDTO } from './dto/create-contact.dto';
 import { GetContactDTO } from './dto/get-contact.dto';
+import { ExtendedPrismaClient } from '../prisma.extension';
+import { PaginatedClientsDTO } from './dto/paginated-clients.dto';
 
 @Injectable()
 export class ClientsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    @Inject('PrismaService')
+    private readonly prismaService: CustomPrismaService<ExtendedPrismaClient>,
+  ) {}
 
-  async findOne(id: string): Promise<GetClientDTO> {
-    return await this.prisma.client.findUniqueOrThrow({
+  async findById(id: string): Promise<GetClientDTO> {
+    return await this.prismaService.client.client.findUniqueOrThrow({
       where: {
         id,
       },
@@ -21,12 +26,51 @@ export class ClientsService {
     });
   }
 
+  async findAll(
+    limit: number,
+    page: number,
+    sortBy: string,
+    sortOrder: string,
+  ): Promise<PaginatedClientsDTO> {
+    const [clients, meta] = await this.prismaService.client.client
+      .paginate({
+        orderBy: {
+          [sortBy]: sortOrder,
+        },
+        include: {
+          contacts: true,
+        },
+      })
+      .withPages({
+        limit,
+        page,
+        includePageCount: true,
+      });
+
+    return {
+      clients,
+      meta,
+    };
+  }
+
   async create(client: CreateClientDTO): Promise<GetClientDTO> {
-    return await this.prisma.client.create({
+    const normalizedFirstName: string =
+      client.firstName.toLowerCase().charAt(0).toUpperCase() +
+      client.firstName.toLowerCase().slice(1);
+    const normalizedLastName: string =
+      client.lastName.toLowerCase().charAt(0).toUpperCase() +
+      client.lastName.toLowerCase().slice(1);
+
+    const normalizedPatronymic: string | undefined = client.patronymic
+      ? client.patronymic.toLowerCase().charAt(0).toUpperCase() +
+        client.patronymic.toLowerCase().slice(1)
+      : undefined;
+
+    return await this.prismaService.client.client.create({
       data: {
-        firstName: client.firstName,
-        lastName: client.lastName,
-        patronymic: client.patronymic,
+        firstName: normalizedFirstName,
+        lastName: normalizedLastName,
+        patronymic: normalizedPatronymic,
         contacts: {
           createMany: {
             data: [...(client.contacts ?? [])],
@@ -40,7 +84,7 @@ export class ClientsService {
   }
 
   async updateClient(id: string, client: UpdateClientDTO): Promise<void> {
-    await this.prisma.client.update({
+    await this.prismaService.client.client.update({
       where: {
         id,
       },
@@ -56,7 +100,7 @@ export class ClientsService {
     id: string,
     contacts: CreateContactDTO[],
   ): Promise<void> {
-    await this.prisma.$transaction(async (tr): Promise<void> => {
+    await this.prismaService.client.$transaction(async (tr): Promise<void> => {
       await tr.contact.deleteMany({
         where: {
           clientId: id,
@@ -78,7 +122,7 @@ export class ClientsService {
   }
 
   async delete(id: string): Promise<void> {
-    await this.prisma.client.delete({
+    await this.prismaService.client.client.delete({
       where: {
         id,
       },
