@@ -55,15 +55,15 @@ export class ClientsService {
 
   async create(client: CreateClientDTO): Promise<GetClientDTO> {
     const normalizedFirstName: string =
-      client.firstName.toLowerCase().charAt(0).toUpperCase() +
-      client.firstName.toLowerCase().slice(1);
+      client.firstName.trim().charAt(0).toUpperCase() +
+      client.firstName.trim().toLowerCase().slice(1);
     const normalizedLastName: string =
-      client.lastName.toLowerCase().charAt(0).toUpperCase() +
-      client.lastName.toLowerCase().slice(1);
+      client.lastName.trim().charAt(0).toUpperCase() +
+      client.lastName.trim().toLowerCase().slice(1);
 
     const normalizedPatronymic: string | undefined = client.patronymic
-      ? client.patronymic.toLowerCase().charAt(0).toUpperCase() +
-        client.patronymic.toLowerCase().slice(1)
+      ? client.patronymic.trim().charAt(0).toUpperCase() +
+        client.patronymic.trim().toLowerCase().slice(1)
       : undefined;
 
     return await this.prismaService.client.client.create({
@@ -84,14 +84,28 @@ export class ClientsService {
   }
 
   async updateClient(id: string, client: UpdateClientDTO): Promise<void> {
+    const normalizedFirstName: string | undefined = client.firstName
+      ? client.firstName.trim().charAt(0).toUpperCase() +
+        client.firstName.trim().toLowerCase().slice(1)
+      : undefined;
+    const normalizedLastName: string | undefined = client.lastName
+      ? client.lastName.trim().charAt(0).toUpperCase() +
+        client.lastName.trim().toLowerCase().slice(1)
+      : undefined;
+
+    const normalizedPatronymic: string | undefined = client.patronymic
+      ? client.patronymic.trim().charAt(0).toUpperCase() +
+        client.patronymic.trim().toLowerCase().slice(1)
+      : undefined;
+
     await this.prismaService.client.client.update({
       where: {
         id,
       },
       data: {
-        firstName: client.firstName,
-        lastName: client.lastName,
-        patronymic: client.patronymic,
+        firstName: normalizedFirstName,
+        lastName: normalizedLastName,
+        patronymic: normalizedPatronymic,
       },
     });
   }
