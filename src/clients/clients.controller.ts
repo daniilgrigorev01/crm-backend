@@ -73,6 +73,7 @@ export class ClientsController {
           query.page ?? 1,
           query.sortBy ?? 'createdAt',
           query.sortOrder ?? 'asc',
+          query.search,
         );
 
       return plainToInstance(PaginatedClientsDTO, pageClients);

@@ -31,11 +31,52 @@ export class ClientsService {
     page: number,
     sortBy: string,
     sortOrder: string,
+    search: string | undefined,
   ): Promise<PaginatedClientsDTO> {
     const [clients, meta] = await this.prismaService.client.client
       .paginate({
         orderBy: {
           [sortBy]: sortOrder,
+        },
+        where: {
+          OR: [
+            {
+              firstName: {
+                contains: search ? search.trim() : '',
+                mode: 'insensitive',
+              },
+            },
+            {
+              lastName: {
+                contains: search ? search.trim() : '',
+                mode: 'insensitive',
+              },
+            },
+            {
+              patronymic: {
+                contains: search ? search.trim() : '',
+                mode: 'insensitive',
+              },
+            },
+            {
+              AND: [
+                {
+                  firstName: {
+                    contains: search ? search.trim().split(' ')[1] : undefined,
+                    mode: 'insensitive',
+                  },
+                  lastName: {
+                    contains: search ? search.trim().split(' ')[0] : undefined,
+                    mode: 'insensitive',
+                  },
+                  patronymic: {
+                    contains: search ? search.trim().split(' ')[2] : undefined,
+                    mode: 'insensitive',
+                  },
+                },
+              ],
+            },
+          ],
         },
         include: {
           contacts: true,

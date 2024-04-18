@@ -1,11 +1,11 @@
-import { IsIn, IsNumber, IsOptional, Min } from 'class-validator';
+import { IsIn, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { Type } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ClientsQueryParametersDTO {
   @ApiProperty({ required: false, example: '10' })
   @Min(1, { message: 'Лимит не может быть меньше 1' })
-  @IsNumber({}, { message: 'Лимит должен быть валидным числом' })
+  @IsNumber({}, { message: 'Лимит должен быть числом' })
   @Type(() => Number)
   @IsOptional()
   limit?: number;
@@ -31,4 +31,9 @@ export class ClientsQueryParametersDTO {
   })
   @IsOptional()
   sortOrder?: 'asc' | 'desc';
+
+  @ApiProperty({ required: false, example: 'Васильев Иван' })
+  @IsString({ message: 'Поисковый запрос должен быть строкой' })
+  @IsOptional()
+  search?: string;
 }
