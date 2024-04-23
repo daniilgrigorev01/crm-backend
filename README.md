@@ -38,6 +38,8 @@ REST API сервер для управления базой данных кли
      PORT=0000
      DATABASE_URL='postgresql://USER_DB:PASS_DB@HOST_DB:PORT_DB/NAME_DB'
      JWT_SECRET='YOUR_JWT_SECRET'
+     REDIS_HOST='localhost'
+     REDIS_PORT=6379
    ```
 
 3. Выполните миграцию базы данных

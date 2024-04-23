@@ -2,8 +2,12 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
+  HttpCode,
   InternalServerErrorException,
   Post,
+  Req,
+  Res,
   UnauthorizedException,
 } from '@nestjs/common';
 import {
@@ -17,9 +21,10 @@ import {
 } from '@nestjs/swagger';
 import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
+import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { LoginDTO } from './dto/login.dto';
-import { AccessTokenDTO } from './dto/access-token.dto';
+import { TokensDTO } from './dto/tokens.dto';
 import { RegistrationUserDTO } from './dto/registration-user.dto';
 import { GetAuthUserDTO } from './dto/get-auth-user.dto';
 
@@ -29,8 +34,9 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('login')
+  @HttpCode(200)
   @ApiOkResponse({
-    type: AccessTokenDTO,
+    type: TokensDTO,
     description: 'Пользователь успешно аутентифицирован',
   })
   @ApiBadRequestResponse({ description: 'Ошибка валидации данных' })
@@ -38,9 +44,22 @@ export class AuthController {
     description: 'Ошибка при работе с базой данных',
   })
   @ApiUnauthorizedResponse({ description: 'Неверный пароль' })
-  async login(@Body() user: LoginDTO): Promise<AccessTokenDTO> {
+  async login(
+    @Body() user: LoginDTO,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<TokensDTO> {
     try {
-      return await this.authService.login(user.username, user.password);
+      const tokens: TokensDTO = await this.authService.login(
+        user.username,
+        user.password,
+      );
+
+      response.cookie('refreshToken', tokens.refreshToken, {
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+      });
+
+      return plainToInstance(TokensDTO, tokens);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         throw error;
@@ -90,6 +109,36 @@ export class AuthController {
           'Ошибка в работе базы данных при регистрации нового пользователя',
         );
       }
+    }
+  }
+
+  @Get('refresh')
+  @ApiOkResponse({ description: 'Успешное обновление токена доступа' })
+  @ApiUnauthorizedResponse({ description: 'Недействительный токен обновления' })
+  @ApiInternalServerErrorResponse({
+    description: 'Ошибка в работе базы данных',
+  })
+  async refreshToken(
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<TokensDTO> {
+    try {
+      const tokens: TokensDTO = await this.authService.refreshToken(
+        request.cookies.refreshToken,
+      );
+
+      response.cookie('refreshToken', tokens.refreshToken, {
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60 * 24 * 7,
+      });
+
+      return plainToInstance(TokensDTO, tokens);
+    } catch (error) {
+      throw error instanceof UnauthorizedException
+        ? error
+        : new InternalServerErrorException(
+            'Ошибка в работе базы данных при обновлении токена доступа',
+          );
     }
   }
 }

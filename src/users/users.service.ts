@@ -15,6 +15,14 @@ export class UsersService {
     });
   }
 
+  async findById(id: string): Promise<GetUserDTO> {
+    return await this.prismaService.user.findUniqueOrThrow({
+      where: {
+        id,
+      },
+    });
+  }
+
   async create(user: CreateUserDTO): Promise<GetUserDTO> {
     return await this.prismaService.user.create({
       data: {
