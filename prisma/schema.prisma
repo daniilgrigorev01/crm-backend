@@ -32,3 +32,9 @@ model Contact {
   client   Client   @relation(fields: [clientId], references: [id], onDelete: Cascade)
   clientId String
 }
+
+model User {
+  id       String @id @default(uuid())
+  username String @unique
+  password String
+}

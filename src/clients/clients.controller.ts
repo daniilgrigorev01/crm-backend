@@ -10,10 +10,12 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
@@ -21,6 +23,7 @@ import {
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiTags,
+  ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
@@ -30,9 +33,12 @@ import { GetClientDTO } from './dto/get-client.dto';
 import { UpdateClientDTO } from './dto/update-client.dto';
 import { PaginatedClientsDTO } from './dto/paginated-clients.dto';
 import { ClientsQueryParametersDTO } from './dto/clients-query-parameters.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('Clients')
+@ApiBearerAuth()
 @UseInterceptors(ClassSerializerInterceptor)
+@UseGuards(JwtAuthGuard)
 @Controller('clients')
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
@@ -43,6 +49,7 @@ export class ClientsController {
   @ApiInternalServerErrorResponse({
     description: 'Ошибка при поиске клиента',
   })
+  @ApiUnauthorizedResponse({ description: 'Нет авторизации' })
   async findById(@Param('id') id: string): Promise<GetClientDTO> {
     try {
       const client: GetClientDTO = await this.clientsService.findById(id);
@@ -63,6 +70,7 @@ export class ClientsController {
   @ApiInternalServerErrorResponse({
     description: 'Ошибка при получении списка клиентов',
   })
+  @ApiUnauthorizedResponse({ description: 'Нет авторизации' })
   async findAll(
     @Query() query: ClientsQueryParametersDTO,
   ): Promise<PaginatedClientsDTO> {
@@ -104,6 +112,7 @@ export class ClientsController {
   @ApiInternalServerErrorResponse({
     description: 'Ошибка при записи в базу данных',
   })
+  @ApiUnauthorizedResponse({ description: 'Нет авторизации' })
   async create(@Body() client: CreateClientDTO): Promise<GetClientDTO> {
     try {
       const newClient: GetClientDTO = await this.clientsService.create(client);
@@ -135,6 +144,7 @@ export class ClientsController {
   @ApiInternalServerErrorResponse({
     description: 'Ошибка при обновлении записи в базе данных',
   })
+  @ApiUnauthorizedResponse({ description: 'Нет авторизации' })
   async update(
     @Param('id') id: string,
     @Body() client: UpdateClientDTO,
@@ -171,6 +181,7 @@ export class ClientsController {
   @ApiInternalServerErrorResponse({
     description: 'Ошибка при удалении из база данных',
   })
+  @ApiUnauthorizedResponse({ description: 'Нет авторизации' })
   async delete(@Param('id') id: string): Promise<void> {
     try {
       await this.clientsService.delete(id);

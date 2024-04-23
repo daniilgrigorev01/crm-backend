@@ -23,33 +23,34 @@ REST API сервер для управления базой данных кли
 
 1. Клонируйте репозиторий и установите зависимости
 
-    ```
-      git clone https://github.com/daniilgrigorev01/crm-backend.git
-      cd crm-backend
-      pnpm i --frozen-lockfile
-    ```
+   ```
+     git clone https://github.com/daniilgrigorev01/crm-backend.git
+     cd crm-backend
+     pnpm i --frozen-lockfile
+   ```
 
 2. Установите необходимые env-переменные
 
-    **Примечание:** для хранения env-переменных используются файлы с названиями .env.[development|production].
-    Вы можете использовать свои названия, поменяв их в скриптах [package.json](package.json)
+   **Примечание:** для хранения env-переменных используются файлы с названиями .env.[development|production].
+   Вы можете использовать свои названия, поменяв их в скриптах [package.json](package.json)
 
-    ```
-      PORT=0000
-      DATABASE_URL='postgresql://USER_DB:PASS_DB@HOST_DB:PORT_DB/NAME_DB'
-    ```
+   ```
+     PORT=0000
+     DATABASE_URL='postgresql://USER_DB:PASS_DB@HOST_DB:PORT_DB/NAME_DB'
+     JWT_SECRET='YOUR_JWT_SECRET'
+   ```
 
 3. Выполните миграцию базы данных
 
-    ```
-      pnpm run migrate:dev
-    ```
+   ```
+     pnpm run migrate:dev
+   ```
 
 4. Запустите сервер в режиме разработки
 
-    ```
-      pnpm run start:dev
-    ```
+   ```
+     pnpm run start:dev
+   ```
 
 ## API
 

@@ -29,6 +29,7 @@ async function bootstrap(): Promise<void> {
   const config: Omit<OpenAPIObject, 'paths'> = new DocumentBuilder()
     .setTitle('CRM-backend')
     .setDescription('REST API для управления базой данных клиентов.')
+    .addBearerAuth()
     .build();
   const document: OpenAPIObject = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('docs', app, document, { useGlobalPrefix: true });
