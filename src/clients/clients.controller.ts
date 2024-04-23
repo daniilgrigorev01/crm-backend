@@ -27,6 +27,7 @@ import {
 } from '@nestjs/swagger';
 import { Prisma } from '@prisma/client';
 import { plainToInstance } from 'class-transformer';
+import { CacheInterceptor } from '@nestjs/cache-manager';
 import { ClientsService } from './clients.service';
 import { CreateClientDTO } from './dto/create-client.dto';
 import { GetClientDTO } from './dto/get-client.dto';
@@ -44,6 +45,7 @@ export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
   @Get(':id')
+  @UseInterceptors(CacheInterceptor)
   @ApiOkResponse({ type: GetClientDTO, description: 'Клиент найден' })
   @ApiNotFoundResponse({ description: 'Клиент с таким ID не найден' })
   @ApiInternalServerErrorResponse({
@@ -65,6 +67,7 @@ export class ClientsController {
   }
 
   @Get()
+  @UseInterceptors(CacheInterceptor)
   @ApiOkResponse({ type: PaginatedClientsDTO })
   @ApiBadRequestResponse({ description: 'Ошибка валидации данных' })
   @ApiInternalServerErrorResponse({
@@ -83,7 +86,6 @@ export class ClientsController {
           query.sortOrder ?? 'asc',
           query.search,
         );
-
       return plainToInstance(PaginatedClientsDTO, pageClients);
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
