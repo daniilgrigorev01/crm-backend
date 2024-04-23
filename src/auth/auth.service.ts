@@ -76,4 +76,8 @@ export class AuthService {
     }
     throw new UnauthorizedException('Токен обновления недействителен');
   }
+
+  async logout(refreshToken: string): Promise<void> {
+    await this.redis.del(refreshToken);
+  }
 }

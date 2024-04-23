@@ -9,12 +9,15 @@ import {
   Req,
   Res,
   UnauthorizedException,
+  UseGuards,
 } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
+  ApiBearerAuth,
   ApiConflictResponse,
   ApiCreatedResponse,
   ApiInternalServerErrorResponse,
+  ApiNoContentResponse,
   ApiOkResponse,
   ApiTags,
   ApiUnauthorizedResponse,
@@ -27,6 +30,7 @@ import { LoginDTO } from './dto/login.dto';
 import { TokensDTO } from './dto/tokens.dto';
 import { RegistrationUserDTO } from './dto/registration-user.dto';
 import { GetAuthUserDTO } from './dto/get-auth-user.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -138,6 +142,26 @@ export class AuthController {
         ? error
         : new InternalServerErrorException(
             'Ошибка в работе базы данных при обновлении токена доступа',
+          );
+    }
+  }
+
+  @Get('logout')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiNoContentResponse({ description: 'Успешный выход из системы' })
+  @ApiUnauthorizedResponse({ description: 'Нет авторизации' })
+  @ApiInternalServerErrorResponse({
+    description: 'Ошибка в работе базы данных',
+  })
+  async logout(@Req() request: Request): Promise<void> {
+    try {
+      await this.authService.logout(request.cookies.refreshToken);
+    } catch (error) {
+      throw error instanceof UnauthorizedException
+        ? error
+        : new InternalServerErrorException(
+            'Ошибка в работе базы данных при попытке выхода из системы',
           );
     }
   }
