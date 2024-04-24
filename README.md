@@ -24,8 +24,8 @@ REST API сервер для управления базой данных кли
 1. Клонируйте репозиторий и установите зависимости
 
    ```
-     git clone https://github.com/daniilgrigorev01/crm-backend.git
-     cd crm-backend
+     git clone https://github.com/daniilgrigorev01/crm-backend.git &&
+     cd crm-backend &&
      pnpm i --frozen-lockfile
    ```
 
@@ -52,18 +52,29 @@ REST API сервер для управления базой данных кли
      # Подлючение к Redis
      REDIS_HOST=0.0.0.0
      REDIS_PORT=6379
+
+     # Секретная строка для JWT
+     JWT_SECRET=JWT_SECRET
    ```
 
-3. Выполните миграцию базы данных
+3. Запустите Docker-контейнеры
 
    ```
-     pnpm run migrate:dev
+     docker compose --env-file .env.production build &&
+     docker compose --env-file .env.production up
    ```
 
-4. Запустите сервер в режиме разработки
+4. Выполните миграцию базы данных
 
    ```
-     pnpm run start:dev
+     pnpm run migrate:prod
+   ```
+
+5. Запустите сервер
+
+   ```
+     pnpm run build &&
+     pnpm run start
    ```
 
 ## API
@@ -81,6 +92,7 @@ REST API сервер для управления базой данных кли
 - [PrismaORM](https://www.prisma.io/orm)
 - [PostgreSQL](https://www.postgresql.org/)
 - [Redis](https://redis.io/)
+- [Docker](https://www.docker.com/)
 
 ## Лицензия
 
