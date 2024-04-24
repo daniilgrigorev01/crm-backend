@@ -35,10 +35,22 @@ REST API сервер для управления базой данных кли
    Вы можете использовать свои названия, поменяв их в скриптах [package.json](package.json)
 
    ```
-     PORT=0000
-     DATABASE_URL='postgresql://USER_DB:PASS_DB@HOST_DB:PORT_DB/NAME_DB'
-     JWT_SECRET='YOUR_JWT_SECRET'
-     REDIS_HOST='localhost'
+     # Порт приложения
+     PORT=3000
+
+     # Включение/выключение Swagger
+     SWAGGER_DOCS=true
+
+     # Подлючение к PostgreSQL
+     DB_USER=postgres
+     DB_PASSWORD=postgres
+     DB_HOST=localhost
+     DB_PORT=5432
+     DB_NAME=db
+     DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
+
+     # Подлючение к Redis
+     REDIS_HOST=0.0.0.0
      REDIS_PORT=6379
    ```
 
