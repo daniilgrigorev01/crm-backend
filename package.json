@@ -5,7 +5,8 @@
     "build": "nest build",
     "start": "dotenv -e .env.production -- nest start",
     "start:dev": "dotenv -e .env.development -- nest start --watch",
-    "migrate:dev": "dotenv -e .env.development -- prisma migrate dev"
+    "migrate:dev": "dotenv -e .env.development -- prisma migrate dev",
+    "migrate:prod": "dotenv -e .env.production -- prisma migrate deploy"
   },
   "dependencies": {
     "@nestjs-modules/ioredis": "^2.0.2",
