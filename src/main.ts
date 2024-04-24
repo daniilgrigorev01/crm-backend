@@ -33,7 +33,7 @@ async function bootstrap(): Promise<void> {
 
   app.use(cookieParser());
 
-  if (process.env.MODE === 'development') {
+  if (process.env.SWAGGER_DOCS) {
     const config: Omit<OpenAPIObject, 'paths'> = new DocumentBuilder()
       .setTitle('CRM-backend')
       .setDescription('REST API для управления базой данных клиентов.')
