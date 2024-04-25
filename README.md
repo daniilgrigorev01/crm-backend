@@ -3,6 +3,7 @@
 <div align="center">
   <img alt="ESLint" src="https://img.shields.io/badge/ESLint-4b3263?style=flat&logo=eslint&logoColor=white">
   <img alt="Prettier" src="https://img.shields.io/badge/Prettier-3658a5?style=flat&logo=prettier&logoColor=f7b93e">
+  <img alt="pnpm" src="https://img.shields.io/badge/pnpm-f69220?style=flat&logo=pnpm&logoColor=white">
 </div>
 
 ## Описание
@@ -19,14 +20,11 @@ REST API сервер для управления базой данных кли
 
 ## Запуск
 
-**Примечание:** в проекте используется менеджер пакетов [pnpm](https://pnpm.io/).
-
-1. Клонируйте репозиторий и установите зависимости
+1. Клонируйте репозиторий
 
    ```
      git clone https://github.com/daniilgrigorev01/crm-backend.git &&
-     cd crm-backend &&
-     pnpm i --frozen-lockfile
+     cd crm-backend
    ```
 
 2. Установите необходимые env-переменные
@@ -36,7 +34,7 @@ REST API сервер для управления базой данных кли
 
    ```
      # Порт приложения
-     PORT=3000
+     PORT=8080
 
      # Включение/выключение Swagger
      SWAGGER_DOCS=true
@@ -44,37 +42,23 @@ REST API сервер для управления базой данных кли
      # Подлючение к PostgreSQL
      DB_USER=postgres
      DB_PASSWORD=postgres
-     DB_HOST=localhost
+     DB_HOST=db // используется имя контейнера Docker
      DB_PORT=5432
      DB_NAME=db
      DATABASE_URL=postgresql://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}/${DB_NAME}
 
      # Подлючение к Redis
-     REDIS_HOST=0.0.0.0
+     REDIS_HOST=redis // используется имя контейнера Docker
      REDIS_PORT=6379
 
      # Секретная строка для JWT
      JWT_SECRET=JWT_SECRET
    ```
 
-3. Запустите Docker-контейнеры
+3. Запустите Docker Compose
 
    ```
-     docker compose --env-file .env.production build &&
      docker compose --env-file .env.production up
-   ```
-
-4. Выполните миграцию базы данных
-
-   ```
-     pnpm run migrate:prod
-   ```
-
-5. Запустите сервер
-
-   ```
-     pnpm run build &&
-     pnpm run start
    ```
 
 ## API
@@ -82,7 +66,7 @@ REST API сервер для управления базой данных кли
 См. спецификацию после запуска сервера по адресу:
 
 ```
-  localhost:PORT/api/docs
+  127.0.0.1:8080/api/docs
 ```
 
 ## Технологии

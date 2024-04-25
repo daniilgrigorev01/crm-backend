@@ -1,0 +1,9 @@
+# Скомпилированные файлы
+/dist
+/node_modules
+
+# IDE
+/.idea
+
+# Переменные окружения
+.env.development

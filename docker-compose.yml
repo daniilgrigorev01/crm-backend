@@ -1,6 +1,21 @@
 services:
+  app:
+    build: .
+    container_name: app
+    restart: unless-stopped
+    ports:
+      - ${PORT}:${PORT}
+    environment:
+      PORT: ${PORT}
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
   db:
     image: postgres:16.2
+    container_name: db
     restart: unless-stopped
     shm_size: 128mb
     volumes:
@@ -19,6 +34,7 @@ services:
 
   redis:
     image: redis:7.2
+    container_name: redis
     restart: unless-stopped
     volumes:
       - rdata:/data
@@ -29,7 +45,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-
     depends_on:
       db:
         condition: service_healthy
