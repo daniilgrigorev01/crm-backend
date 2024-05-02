@@ -7,6 +7,7 @@ COPY . .
 ENV PNPM_HOME="/pnpm"
 ENV PATH="$PNPM_HOME:$PATH"
 
-RUN corepack enable && pnpm add -g @nestjs/cli && pnpm i --frozen-lockfile
+RUN corepack enable && pnpm add -g @nestjs/cli && pnpm i --frozen-lockfile && \
+    pnpm run migrate:prod
 
-CMD pnpm run migrate:prod && pnpm run start:prod
+CMD pnpm run start:prod
